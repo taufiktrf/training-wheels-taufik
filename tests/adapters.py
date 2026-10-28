@@ -14,12 +14,16 @@ from numpy.typing import NDArray
 from jaxtyping import Bool, Float, Int
 from torch import Tensor, nn
 
+from therapml.pca import pca
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
 # ============================================================================
 
-def run_tensor_multiply(arr1: Float[list, "b x y"], arr2: Float[list, "b y z"]) -> Float[list, "b x z"]:
+
+def run_tensor_multiply(
+    arr1: Float[list, "b x y"], arr2: Float[list, "b y z"]
+) -> Float[list, "b x z"]:
     raise NotImplementedError
 
 
@@ -33,6 +37,7 @@ def run_tensor_dot(arr1: Float[list, "..."], arr2: Float[list, "..."], dim: int)
 
 # --- Task 1: PCA -----------------------------------------------------------
 
+
 def run_pca(data: NDArray, k: int) -> dict:
     """Run PCA on *data* (n_samples, n_features) and project to *k* components.
 
@@ -43,10 +48,12 @@ def run_pca(data: NDArray, k: int) -> dict:
         ``mean``          – (n_features,) per-feature mean used for centering
         ``reconstructed`` – (n_samples, n_features) reconstruction from k components
     """
-    raise NotImplementedError
+
+    return pca(data, k)
 
 
 # --- Task 2: SVD & Low-Rank Approximation ----------------------------------
+
 
 def run_truncated_svd(matrix: NDArray, rank: int) -> dict:
     """Truncated SVD of *matrix* (m, n) at the given *rank*.
@@ -62,6 +69,7 @@ def run_truncated_svd(matrix: NDArray, rank: int) -> dict:
 
 # --- Task 4: Maximum Likelihood Estimation ----------------------------------
 
+
 def run_mle_gaussian(data: NDArray, lr: float = 0.01, n_steps: int = 5000) -> dict:
     """Fit a 1-D Gaussian to *data* via gradient-descent MLE.
 
@@ -73,6 +81,7 @@ def run_mle_gaussian(data: NDArray, lr: float = 0.01, n_steps: int = 5000) -> di
 
 
 # --- Task 6: Information Theory Toolkit -------------------------------------
+
 
 def run_entropy(P: NDArray) -> float:
     """Shannon entropy H(P) in *bits* (log base 2)."""
@@ -99,6 +108,7 @@ def run_mutual_information(joint: NDArray) -> float:
 
 # --- Task 7: Numerical Stability -------------------------------------------
 
+
 def run_log_sum_exp(x: NDArray) -> float:
     """Numerically stable log-sum-exp: log(sum(exp(x)))."""
     raise NotImplementedError
@@ -106,8 +116,12 @@ def run_log_sum_exp(x: NDArray) -> float:
 
 # --- Task 8: Optimizers (pure NumPy, linear regression) ---------------------
 
+
 def run_numpy_sgd_fit(
-    X: NDArray, y: NDArray, lr: float, n_steps: int,
+    X: NDArray,
+    y: NDArray,
+    lr: float,
+    n_steps: int,
 ) -> dict:
     """Vanilla SGD on linear regression.
 
@@ -117,7 +131,11 @@ def run_numpy_sgd_fit(
 
 
 def run_numpy_sgd_momentum_fit(
-    X: NDArray, y: NDArray, lr: float, momentum: float, n_steps: int,
+    X: NDArray,
+    y: NDArray,
+    lr: float,
+    momentum: float,
+    n_steps: int,
 ) -> dict:
     """SGD + momentum on linear regression.
 
@@ -127,7 +145,10 @@ def run_numpy_sgd_momentum_fit(
 
 
 def run_numpy_adam_fit(
-    X: NDArray, y: NDArray, lr: float, n_steps: int,
+    X: NDArray,
+    y: NDArray,
+    lr: float,
+    n_steps: int,
 ) -> dict:
     """Adam on linear regression.
 
@@ -142,12 +163,14 @@ def run_numpy_adam_fit(
 
 # --- Task 1: Autograd Intuition --------------------------------------------
 
+
 def get_value_class() -> Any:
     """Return the learner's ``Value`` class (scalar autograd engine)."""
     raise NotImplementedError
 
 
 # --- Task 2: Linear Layers & Initialization --------------------------------
+
 
 def run_linear(
     d_in: int,
@@ -169,6 +192,7 @@ def run_xavier_init(fan_in: int, fan_out: int) -> Float[Tensor, "fan_out fan_in"
 
 
 # --- Task 3: Activations ---------------------------------------------------
+
 
 def run_sigmoid(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
     raise NotImplementedError
@@ -199,6 +223,7 @@ def run_swiglu(
 
 # --- Task 4: Loss Functions ------------------------------------------------
 
+
 def run_cross_entropy_loss(
     logits: Float[Tensor, "batch output_dim"],
     ground_truth: Float[Tensor, "batch output_dim"],
@@ -217,6 +242,7 @@ def run_kl_divergence_loss(
 
 # --- Task 5: Optimizers (PyTorch-compatible) --------------------------------
 
+
 def get_sgd_cls() -> Any:
     """Return the learner's SGD optimizer class (with momentum support)."""
     raise NotImplementedError
@@ -229,11 +255,13 @@ def get_adam_cls() -> Any:
 
 # --- Task 6: Regularization ------------------------------------------------
 
+
 def run_dropout(input: Float[Tensor, "..."], prob: float) -> Float[Tensor, "..."]:
     raise NotImplementedError
 
 
 # --- Task 7: Normalization & Residuals --------------------------------------
+
 
 def run_layernorm(
     input: Float[Tensor, "batch ..."],
@@ -251,6 +279,7 @@ def run_rmsnorm(
 
 
 # --- Task 8: MNIST Integration Test -----------------------------------------
+
 
 def get_custom_mnist_model() -> Any:
     """Return an *untrained* nn.Module built entirely from custom components
