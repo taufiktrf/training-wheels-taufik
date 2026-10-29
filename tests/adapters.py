@@ -17,6 +17,7 @@ from torch import Tensor, nn
 from therapml.pca import pca
 from therapml.svd import truncated_svd
 from therapml.mle import mle_gaussian
+from therapml.numerical_stability import log_sum_exp
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -114,7 +115,7 @@ def run_mutual_information(joint: NDArray) -> float:
 
 def run_log_sum_exp(x: NDArray) -> float:
     """Numerically stable log-sum-exp: log(sum(exp(x)))."""
-    raise NotImplementedError
+    return log_sum_exp(x)
 
 
 # --- Task 8: Optimizers (pure NumPy, linear regression) ---------------------
