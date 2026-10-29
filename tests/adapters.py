@@ -16,6 +16,7 @@ from torch import Tensor, nn
 
 from therapml.pca import pca
 from therapml.svd import truncated_svd
+from therapml.mle import mle_gaussian
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -79,7 +80,7 @@ def run_mle_gaussian(data: NDArray, lr: float = 0.01, n_steps: int = 5000) -> di
         ``mu``    – estimated mean  (float)
         ``sigma2``– estimated variance  (float)
     """
-    raise NotImplementedError
+    return mle_gaussian(data, lr, n_steps)
 
 
 # --- Task 6: Information Theory Toolkit -------------------------------------
