@@ -18,6 +18,12 @@ from therapml.pca import pca
 from therapml.svd import truncated_svd
 from therapml.mle import mle_gaussian
 from therapml.numerical_stability import log_sum_exp
+from therapml.info_theory import (
+    entropy,
+    kl_divergence,
+    cross_entropy,
+    mutual_information,
+)
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -89,12 +95,12 @@ def run_mle_gaussian(data: NDArray, lr: float = 0.01, n_steps: int = 5000) -> di
 
 def run_entropy(P: NDArray) -> float:
     """Shannon entropy H(P) in *bits* (log base 2)."""
-    raise NotImplementedError
+    return entropy(P)
 
 
 def run_kl_divergence(P: NDArray, Q: NDArray) -> float:
     """KL divergence D_KL(P || Q) in *bits*."""
-    raise NotImplementedError
+    return kl_divergence(P, Q)
 
 
 def run_cross_entropy_info(P: NDArray, Q: NDArray) -> float:
@@ -102,12 +108,12 @@ def run_cross_entropy_info(P: NDArray, Q: NDArray) -> float:
 
     Named ``_info`` to avoid collision with the PyTorch loss adapter.
     """
-    raise NotImplementedError
+    return cross_entropy(P, Q)
 
 
 def run_mutual_information(joint: NDArray) -> float:
     """Mutual information I(X; Y) from a 2-D joint distribution table, in *bits*."""
-    raise NotImplementedError
+    return mutual_information(joint)
 
 
 # --- Task 7: Numerical Stability -------------------------------------------
