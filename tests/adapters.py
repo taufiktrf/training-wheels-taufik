@@ -24,6 +24,7 @@ from therapml.info_theory import (
     cross_entropy,
     mutual_information,
 )
+from therapml.optimizers import sgd_fit, sgd_momentum_fit, adam_fit
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -137,7 +138,7 @@ def run_numpy_sgd_fit(
 
     Returns ``{'weights': NDArray, 'loss_history': list[float]}``.
     """
-    raise NotImplementedError
+    return sgd_fit(X, y, lr, n_steps)
 
 
 def run_numpy_sgd_momentum_fit(
@@ -151,7 +152,7 @@ def run_numpy_sgd_momentum_fit(
 
     Returns ``{'weights': NDArray, 'loss_history': list[float]}``.
     """
-    raise NotImplementedError
+    return sgd_momentum_fit(X, y, lr, momentum, n_steps)
 
 
 def run_numpy_adam_fit(
@@ -164,7 +165,7 @@ def run_numpy_adam_fit(
 
     Returns ``{'weights': NDArray, 'loss_history': list[float]}``.
     """
-    raise NotImplementedError
+    return adam_fit(X, y, lr, n_steps)
 
 
 # ============================================================================
