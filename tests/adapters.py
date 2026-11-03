@@ -25,6 +25,7 @@ from therapml.info_theory import (
     mutual_information,
 )
 from therapml.optimizers import sgd_fit, sgd_momentum_fit, adam_fit
+from therapml.autograd import Value
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -177,7 +178,7 @@ def run_numpy_adam_fit(
 
 def get_value_class() -> Any:
     """Return the learner's ``Value`` class (scalar autograd engine)."""
-    raise NotImplementedError
+    return Value
 
 
 # --- Task 2: Linear Layers & Initialization --------------------------------
