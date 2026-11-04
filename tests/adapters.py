@@ -28,6 +28,7 @@ from therapml.optimizers import sgd_fit, sgd_momentum_fit, adam_fit
 from therapml.autograd import Value
 from therapml.linear import linear, kaiming_init, xavier_init
 from therapml.activations import MySigmoid, MyReLU, MyGELU, MySoftmax, MySwiGLU
+from therapml.loss import MyCrossEntropyLoss, MyKLDivergenceLoss
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -242,7 +243,7 @@ def run_cross_entropy_loss(
     logits: Float[Tensor, "batch output_dim"],
     ground_truth: Float[Tensor, "batch output_dim"],
 ) -> Float[Tensor, ""]:
-    raise NotImplementedError
+    return MyCrossEntropyLoss()(logits, ground_truth)
 
 
 def run_kl_divergence_loss(
@@ -251,7 +252,7 @@ def run_kl_divergence_loss(
 ) -> Float[Tensor, ""]:
     """KL-divergence loss.  *input_log_probs* are **log-probabilities**,
     *target_probs* are **probabilities**."""
-    raise NotImplementedError
+    return MyKLDivergenceLoss()(input_log_probs, target_probs)
 
 
 # --- Task 5: Optimizers (PyTorch-compatible) --------------------------------
