@@ -27,6 +27,7 @@ from therapml.info_theory import (
 from therapml.optimizers import sgd_fit, sgd_momentum_fit, adam_fit
 from therapml.autograd import Value
 from therapml.linear import linear, kaiming_init, xavier_init
+from therapml.activations import MySigmoid, MyReLU, MyGELU, MySoftmax, MySwiGLU
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -208,19 +209,19 @@ def run_xavier_init(fan_in: int, fan_out: int) -> Float[Tensor, "fan_out fan_in"
 
 
 def run_sigmoid(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
-    raise NotImplementedError
+    return MySigmoid()(in_features)
 
 
 def run_relu(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
-    raise NotImplementedError
+    return MyReLU()(in_features)
 
 
 def run_gelu(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
-    raise NotImplementedError
+    return MyGELU()(in_features)
 
 
 def run_softmax(in_features: Float[Tensor, "..."], dim: int) -> Float[Tensor, "..."]:
-    raise NotImplementedError
+    return MySoftmax(dim=dim)(in_features)
 
 
 def run_swiglu(
@@ -231,7 +232,7 @@ def run_swiglu(
     w3_weight: Float[Tensor, " d_ff d_model"],
     in_features: Float[Tensor, " ... d_model"],
 ) -> Float[Tensor, " ... d_model"]:
-    raise NotImplementedError
+    return MySwiGLU(d_model, d_ff, w1_weight, w2_weight, w3_weight)(in_features)
 
 
 # --- Task 4: Loss Functions ------------------------------------------------
