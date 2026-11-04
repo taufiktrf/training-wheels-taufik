@@ -26,6 +26,7 @@ from therapml.info_theory import (
 )
 from therapml.optimizers import sgd_fit, sgd_momentum_fit, adam_fit
 from therapml.autograd import Value
+from therapml.linear import linear, kaiming_init, xavier_init
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -190,17 +191,17 @@ def run_linear(
     weights: Float[Tensor, "d_out d_in"],
     in_features: Float[Tensor, "... d_in"],
 ) -> Float[Tensor, "... d_out"]:
-    raise NotImplementedError
+    return linear(d_in, d_out, weights, in_features)
 
 
 def run_kaiming_init(fan_in: int, fan_out: int) -> Float[Tensor, "fan_out fan_in"]:
     """Return a weight matrix initialized with Kaiming He Normal."""
-    raise NotImplementedError
+    return kaiming_init(fan_in, fan_out)
 
 
 def run_xavier_init(fan_in: int, fan_out: int) -> Float[Tensor, "fan_out fan_in"]:
     """Return a weight matrix initialized with Xavier Glorot."""
-    raise NotImplementedError
+    return xavier_init(fan_in, fan_out)
 
 
 # --- Task 3: Activations ---------------------------------------------------
