@@ -31,6 +31,7 @@ from therapml.activations import MySigmoid, MyReLU, MyGELU, MySoftmax, MySwiGLU
 from therapml.loss import MyCrossEntropyLoss, MyKLDivergenceLoss
 from therapml.pt_optimizers import MyAdamW, MySGD
 from therapml.dropout import MyDropout
+from therapml.normalization import MyLayerNorm, MyRMSNorm
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -285,14 +286,14 @@ def run_layernorm(
     gamma: Float[Tensor, "batch ..."],
     beta: Float[Tensor, "batch ..."],
 ) -> Float[Tensor, "batch ..."]:
-    raise NotImplementedError
+    return MyLayerNorm()(input, gamma, beta)
 
 
 def run_rmsnorm(
     input: Float[Tensor, "batch ..."],
     gamma: Float[Tensor, "batch ..."],
 ) -> Float[Tensor, "batch ..."]:
-    raise NotImplementedError
+    return MyRMSNorm()(input, gamma)
 
 
 # --- Task 8: MNIST Integration Test -----------------------------------------
