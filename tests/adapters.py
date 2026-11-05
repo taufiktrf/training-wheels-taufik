@@ -29,6 +29,7 @@ from therapml.autograd import Value
 from therapml.linear import linear, kaiming_init, xavier_init
 from therapml.activations import MySigmoid, MyReLU, MyGELU, MySoftmax, MySwiGLU
 from therapml.loss import MyCrossEntropyLoss, MyKLDivergenceLoss
+from therapml.pt_optimizers import MyAdamW, MySGD
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -260,12 +261,12 @@ def run_kl_divergence_loss(
 
 def get_sgd_cls() -> Any:
     """Return the learner's SGD optimizer class (with momentum support)."""
-    raise NotImplementedError
+    return MySGD
 
 
 def get_adam_cls() -> Any:
     """Return the learner's AdamW optimizer class."""
-    raise NotImplementedError
+    return MyAdamW
 
 
 # --- Task 6: Regularization ------------------------------------------------
