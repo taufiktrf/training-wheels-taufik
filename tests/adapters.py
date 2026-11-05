@@ -30,6 +30,7 @@ from therapml.linear import linear, kaiming_init, xavier_init
 from therapml.activations import MySigmoid, MyReLU, MyGELU, MySoftmax, MySwiGLU
 from therapml.loss import MyCrossEntropyLoss, MyKLDivergenceLoss
 from therapml.pt_optimizers import MyAdamW, MySGD
+from therapml.dropout import MyDropout
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -273,7 +274,7 @@ def get_adam_cls() -> Any:
 
 
 def run_dropout(input: Float[Tensor, "..."], prob: float) -> Float[Tensor, "..."]:
-    raise NotImplementedError
+    return MyDropout(prob)(input)
 
 
 # --- Task 7: Normalization & Residuals --------------------------------------
