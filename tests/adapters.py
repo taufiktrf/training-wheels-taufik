@@ -32,6 +32,7 @@ from therapml.loss import MyCrossEntropyLoss, MyKLDivergenceLoss
 from therapml.pt_optimizers import MyAdamW, MySGD
 from therapml.dropout import MyDropout
 from therapml.normalization import MyLayerNorm, MyRMSNorm
+from therapml.mnist_model import CustomMNISTModel
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -303,17 +304,17 @@ def get_custom_mnist_model() -> Any:
     """Return an *untrained* nn.Module built entirely from custom components
     (MyLinear, MyReLU, MyDropout, MyLayerNorm).
     """
-    raise NotImplementedError
+    return CustomMNISTModel()
 
 
 def get_custom_loss_fn() -> Any:
     """Return the learner's MyCrossEntropyLoss callable."""
-    raise NotImplementedError
+    return MyCrossEntropyLoss()
 
 
 def get_custom_optimizer(params, lr: float = 1e-3) -> Any:
     """Return the learner's MyAdamW optimizer wrapping *params*."""
-    raise NotImplementedError
+    return MyAdamW(params, lr=lr)
 
 
 # ============================================================================
@@ -333,7 +334,10 @@ def get_custom_optimizer(params, lr: float = 1e-3) -> Any:
 #   * Encoding is lossless: ``decode(encode(text)) == text`` for *every* string.
 #     Do not normalize whitespace or Unicode inside ``encode``.
 
-def run_train_bpe(corpus: str, vocab_size: int, special_tokens: list[str] | None = None) -> Any:
+
+def run_train_bpe(
+    corpus: str, vocab_size: int, special_tokens: list[str] | None = None
+) -> Any:
     """Train a byte-level BPE tokenizer on *corpus* and return the trained tokenizer object.
 
     The returned object is opaque to the tests. It is only passed back into
@@ -381,6 +385,7 @@ def get_bpe_vocab(tokenizer: Any) -> dict[int, bytes]:
 
 # --- Task 4: Scaled Dot-Product Attention -----------------------------------
 
+
 def run_scaled_dot_product_attention(
     Q: Float[Tensor, "... queries d_k"],
     K: Float[Tensor, "... keys d_k"],
@@ -399,6 +404,7 @@ def run_scaled_dot_product_attention(
 
 # --- Task 5: Causal Self-Attention (single head) ----------------------------
 
+
 def run_causal_self_attention(
     q_proj_weight: Float[Tensor, "d_k d_in"],
     k_proj_weight: Float[Tensor, "d_k d_in"],
@@ -412,6 +418,7 @@ def run_causal_self_attention(
 
 
 # --- Task 6: Multi-Head Attention -------------------------------------------
+
 
 def run_multihead_self_attention(
     d_model: int,
@@ -433,6 +440,7 @@ def run_multihead_self_attention(
 
 
 # --- Task 7: Grouped Query Attention ----------------------------------------
+
 
 def run_grouped_query_attention(
     d_model: int,
@@ -462,6 +470,7 @@ def run_grouped_query_attention(
 
 
 # --- Task 8: Rotary Positional Embeddings -----------------------------------
+
 
 def run_rope(
     d_k: int,
@@ -497,6 +506,7 @@ def run_multihead_self_attention_with_rope(
 
 
 # --- Task 9: KV-Cache --------------------------------------------------------
+
 
 def get_kv_cached_attention(
     d_model: int,
@@ -559,6 +569,7 @@ def get_kv_cache(attn: Any) -> tuple[Tensor, Tensor]:
 #   out = h + w2( SiLU(w1 · RMSNorm(h)) ⊙ (w3 · RMSNorm(h)) )
 
 # --- Tasks 1–2: Architecture & Assembly -------------------------------------
+
 
 def run_transformer_block(
     d_model: int,
@@ -638,12 +649,15 @@ def run_parameter_audit(model: nn.Module) -> list[dict]:
 
 # --- Task 3: The Training Loop ----------------------------------------------
 
-def run_lr_schedule(step: int, total_steps: int, max_lr: float, min_lr: float, warmup_frac: float = 0.1) -> float:
+
+def run_lr_schedule(
+    step: int, total_steps: int, max_lr: float, min_lr: float, warmup_frac: float = 0.1
+) -> float:
     """Linear warmup followed by cosine decay. With ``W = int(warmup_frac * total_steps)``:
 
-        step <  W              : max_lr · step / W
-        W ≤ step ≤ total_steps : min_lr + ½(1 + cos(π · (step − W) / (total_steps − W))) · (max_lr − min_lr)
-        step >  total_steps    : min_lr
+    step <  W              : max_lr · step / W
+    W ≤ step ≤ total_steps : min_lr + ½(1 + cos(π · (step − W) / (total_steps − W))) · (max_lr − min_lr)
+    step >  total_steps    : min_lr
     """
     raise NotImplementedError
 
@@ -657,6 +671,7 @@ def run_gradient_clipping(parameters: Iterable[nn.Parameter], max_norm: float) -
 
 
 # --- Task 5: Evaluation -----------------------------------------------------
+
 
 def run_perplexity(
     logits: Float[Tensor, "... vocab_size"],
