@@ -354,7 +354,7 @@ def run_train_bpe(
             surrounding text, and must not be learned as part of any merge even
             if it appears in *corpus*.
     """
-    return BPETokenizer().train(corpus, vocab_size)
+    return BPETokenizer().train(corpus, vocab_size, special_tokens)
 
 
 def run_bpe_encode(tokenizer: Any, text: str) -> list[int]:

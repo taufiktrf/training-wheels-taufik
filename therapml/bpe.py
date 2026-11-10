@@ -24,11 +24,21 @@ class BPETokenizer:
     def __init__(self):
         self.vocab = {i: bytes([i]) for i in range(256)}
         self.merges = {}
+        self.special_tokens = {}
 
-    def train(self, corpus: str, vocab_size: int):
-        word_freqs = Counter(tuple(w.encode("utf-8")) for w in SPLIT_RE.findall(corpus))
+    def train(
+        self, corpus: str, vocab_size: int, special_tokens: list[str] | None = None
+    ):
+        chunks = (
+            re.split("|".join(re.escape(s) for s in special_tokens), corpus)
+            if special_tokens
+            else [corpus]
+        )
+        word_freqs = Counter(
+            tuple(w.encode("utf-8")) for c in chunks for w in SPLIT_RE.findall(c)
+        )
 
-        while len(self.vocab) < vocab_size:
+        while len(self.vocab) < vocab_size - len(special_tokens or []):
             # Count every adjacent pair, weighted by word frequency
             pair_freqs = Counter(
                 pair
@@ -48,23 +58,40 @@ class BPETokenizer:
                 _apply_merge(w, a, b, new_id): freq for w, freq in word_freqs.items()
             }
 
+        # Append special tokens to the end of the vocabulary
+        for s in special_tokens or []:
+            sid = len(self.vocab)
+            self.special_tokens[s] = sid
+            self.vocab[sid] = s.encode("utf-8")
+
         return self
 
     def encode(self, text: str) -> list[int]:
+        parts = (
+            re.split(f"({'|'.join(re.escape(s) for s in self.special_tokens)})", text)
+            if self.special_tokens
+            else [text]
+        )
         ids = []
-        for word in SPLIT_RE.findall(text):
-            tokens = tuple(word.encode("utf-8"))
-            while len(tokens) >= 2:
-                # Pick the earliest-learned (highest-priority) mergeable pair
-                best = min(
-                    (p for p in zip(tokens, tokens[1:]) if p in self.merges),
-                    key=lambda p: self.merges[p],
-                    default=None,
-                )
-                if not best:
-                    break
-                tokens = _apply_merge(tokens, *best, self.merges[best])
-            ids.extend(tokens)
+        for part in parts:
+            if not part:
+                continue
+            if part in self.special_tokens:
+                ids.append(self.special_tokens[part])
+                continue
+
+            for word in SPLIT_RE.findall(part):
+                tokens = tuple(word.encode("utf-8"))
+                while len(tokens) >= 2:
+                    best = min(
+                        (p for p in zip(tokens, tokens[1:]) if p in self.merges),
+                        key=lambda p: self.merges[p],
+                        default=None,
+                    )
+                    if not best:
+                        break
+                    tokens = _apply_merge(tokens, *best, self.merges[best])
+                ids.extend(tokens)
         return ids
 
     def decode(self, token_ids: list[int]) -> str:
