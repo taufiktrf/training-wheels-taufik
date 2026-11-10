@@ -33,6 +33,7 @@ from therapml.pt_optimizers import MyAdamW, MySGD
 from therapml.dropout import MyDropout
 from therapml.normalization import MyLayerNorm, MyRMSNorm
 from therapml.mnist_model import CustomMNISTModel
+from therapml.bpe import BPETokenizer
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -353,7 +354,7 @@ def run_train_bpe(
             surrounding text, and must not be learned as part of any merge even
             if it appears in *corpus*.
     """
-    raise NotImplementedError
+    return BPETokenizer().train(corpus, vocab_size)
 
 
 def run_bpe_encode(tokenizer: Any, text: str) -> list[int]:
@@ -363,7 +364,7 @@ def run_bpe_encode(tokenizer: Any, text: str) -> list[int]:
     special-token id. Because the tokenizer is byte-level, every string is
     representable, so ``<UNK>`` must never be emitted.
     """
-    raise NotImplementedError
+    return tokenizer.encode(text)
 
 
 def run_bpe_decode(tokenizer: Any, token_ids: list[int]) -> str:
@@ -372,7 +373,7 @@ def run_bpe_decode(tokenizer: Any, token_ids: list[int]) -> str:
     Byte sequences that are not valid UTF-8 (e.g. half of an emoji) must not
     raise. Decode them with ``errors="replace"`` so they become U+FFFD.
     """
-    raise NotImplementedError
+    return tokenizer.decode(token_ids)
 
 
 def get_bpe_vocab(tokenizer: Any) -> dict[int, bytes]:
@@ -380,7 +381,7 @@ def get_bpe_vocab(tokenizer: Any) -> dict[int, bytes]:
 
     Special tokens map to their UTF-8 encoding (e.g. ``b"<EOS>"``).
     """
-    raise NotImplementedError
+    return tokenizer.vocab
 
 
 # --- Task 4: Scaled Dot-Product Attention -----------------------------------
