@@ -1,0 +1,19 @@
+Vocabulary Size vs. Sequence Length Trade-off
+
+V = Vocabulary
+L = Sequence Length
+
+1. Inverse Relationship:
+   - Larger Vocabulary means Shorter sequence length
+   - Smaller Vocabulary means Longer sequence length
+
+2. Larger Vocab (V high, L low):
+   - Pros: Shorter sequences reduce O(L^2) self-attention compute and KV-cache memory; faster generation.
+   - Cons: Larger embedding and LM-head matrices (O(V * d_model)); rare tokens receive fewer gradient updates.
+
+3. Smaller Vocab (V low, L high):
+   - Pros: Compact embedding tables; all tokens are seen frequently during training.
+   - Cons: Exploding sequence lengths inflate quadratic attention costs, increase latency, and shrink the effective context window.
+
+4. Practical Trade-off:
+   Compression gains show diminishing returns once frequent subwords are merged. Modern LLMs choose V between 32k and 128k to balance sequence length reduction with embedding memory overhead.
