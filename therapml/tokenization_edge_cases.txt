@@ -1,0 +1,18 @@
+BPE Edge Cases & Special Tokens
+
+1. Special Tokens (<PAD>, <BOS>, <EOS>, <UNK>):
+   - Atomic & Isolated: Isolated via regex; never learned as merges or split into pieces.
+   - Vocab End: Occupy the last IDs of the Vocab.
+   - <UNK> Never Needed: Base 256 bytes cover all inputs, so fallback to <UNK> is unnecessary.
+
+2. Unicode & Mixed-Language:
+   - Evaluated as raw UTF-8 bytes; lossless roundtrip across all alphabets and scripts.
+
+3. Emojis & Complex Modifiers:
+   - ZWJ, skin tones, and flag sequences are preserved byte-for-byte.
+
+4. Whitespace:
+   - Never normalized or collapsed; spaces, tabs, and newlines retain exact byte identity.
+
+5. Invalid / Partial UTF-8:
+   - Decoded with `errors="replace"`, safely producing `\ufffd` without raising exceptions.
