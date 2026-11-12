@@ -34,7 +34,7 @@ from therapml.dropout import MyDropout
 from therapml.normalization import MyLayerNorm, MyRMSNorm
 from therapml.mnist_model import CustomMNISTModel
 from therapml.bpe import BPETokenizer
-from therapml.attention import scaled_dot_product_attention
+from therapml.attention import scaled_dot_product_attention, causal_self_attention
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -416,10 +416,7 @@ def run_causal_self_attention(
     """Single-head causal self-attention with Q, K, V projections (no bias,
     no output projection). Token *i* may only attend to tokens ``0..i``.
     """
-    raise NotImplementedError
-
-
-# --- Task 6: Multi-Head Attention -------------------------------------------
+    return causal_self_attention(q_proj_weight, k_proj_weight, v_proj_weight, in_features)
 
 
 def run_multihead_self_attention(
