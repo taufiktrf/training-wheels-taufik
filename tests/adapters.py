@@ -34,6 +34,7 @@ from therapml.dropout import MyDropout
 from therapml.normalization import MyLayerNorm, MyRMSNorm
 from therapml.mnist_model import CustomMNISTModel
 from therapml.bpe import BPETokenizer
+from therapml.attention import scaled_dot_product_attention
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -400,7 +401,7 @@ def run_scaled_dot_product_attention(
     set to −∞ before the softmax. Any number of leading batch/head dimensions
     must be supported.
     """
-    raise NotImplementedError
+    return scaled_dot_product_attention(Q, K, V, mask)
 
 
 # --- Task 5: Causal Self-Attention (single head) ----------------------------
