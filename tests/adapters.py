@@ -34,7 +34,11 @@ from therapml.dropout import MyDropout
 from therapml.normalization import MyLayerNorm, MyRMSNorm
 from therapml.mnist_model import CustomMNISTModel
 from therapml.bpe import BPETokenizer
-from therapml.attention import scaled_dot_product_attention, causal_self_attention
+from therapml.attention import (
+    scaled_dot_product_attention,
+    causal_self_attention,
+    multihead_self_attention,
+)
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -416,7 +420,9 @@ def run_causal_self_attention(
     """Single-head causal self-attention with Q, K, V projections (no bias,
     no output projection). Token *i* may only attend to tokens ``0..i``.
     """
-    return causal_self_attention(q_proj_weight, k_proj_weight, v_proj_weight, in_features)
+    return causal_self_attention(
+        q_proj_weight, k_proj_weight, v_proj_weight, in_features
+    )
 
 
 def run_multihead_self_attention(
@@ -435,7 +441,15 @@ def run_multihead_self_attention(
     where each ``W_q_head_i`` has shape ``(d_model // num_heads, d_model)``.
     All heads must be computed in parallel (no Python loop over heads).
     """
-    raise NotImplementedError
+    return multihead_self_attention(
+        d_model,
+        num_heads,
+        q_proj_weight,
+        k_proj_weight,
+        v_proj_weight,
+        o_proj_weight,
+        in_features,
+    )
 
 
 # --- Task 7: Grouped Query Attention ----------------------------------------
