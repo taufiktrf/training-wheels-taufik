@@ -12,7 +12,7 @@ def scaled_dot_product_attention(Q, K, V, mask=None):
     return softmax(scores, dim=-1) @ V
 
 
-def causal_self_attention(wq, wk, wv, x):
+def causal_self_attention(wq, wk, wv, x, return_attn_weights=False):
     Q = x @ wq.T
     K = x @ wk.T
     V = x @ wv.T
@@ -30,4 +30,7 @@ def causal_self_attention(wq, wk, wv, x):
 
     # Softmax and weighted sum of values
     attn_weights = softmax(scores, dim=-1)
+
+    if return_attn_weights:
+        return attn_weights
     return attn_weights @ V
