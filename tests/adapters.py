@@ -38,7 +38,9 @@ from therapml.attention import (
     scaled_dot_product_attention,
     causal_self_attention,
     multihead_self_attention,
+    grouped_query_attention,
 )
+from therapml.rope import apply_rope
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -479,7 +481,18 @@ def run_grouped_query_attention(
     (default: ``arange(seq)``). If *theta* is ``None``, use no positional
     encoding.
     """
-    raise NotImplementedError
+    return grouped_query_attention(
+        d_model,
+        num_heads,
+        num_kv_heads,
+        q_proj_weight,
+        k_proj_weight,
+        v_proj_weight,
+        o_proj_weight,
+        in_features,
+        theta=theta,
+        token_positions=token_positions,
+    )
 
 
 # --- Task 8: Rotary Positional Embeddings -----------------------------------
@@ -498,7 +511,7 @@ def run_rope(
     is rotated by angle ``pos · θ_i`` with ``θ_i = theta^(−2i / d_k)``.
     *token_positions* broadcasts against the leading dimensions of the input.
     """
-    raise NotImplementedError
+    return apply_rope(in_query_or_key, token_positions, theta)
 
 
 def run_multihead_self_attention_with_rope(
@@ -515,7 +528,18 @@ def run_multihead_self_attention_with_rope(
 ) -> Float[Tensor, "... seq d_model"]:
     """Causal multi-head self-attention with RoPE applied to Q and K (per head,
     with ``d_k = d_model // num_heads``)."""
-    raise NotImplementedError
+    return grouped_query_attention(
+        d_model,
+        num_heads,
+        num_heads,
+        q_proj_weight,
+        k_proj_weight,
+        v_proj_weight,
+        o_proj_weight,
+        in_features,
+        theta=theta,
+        token_positions=token_positions,
+    )
 
 
 # --- Task 9: KV-Cache --------------------------------------------------------
