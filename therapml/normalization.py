@@ -22,10 +22,18 @@ class MyLayerNorm(nn.Module):
 class MyRMSNorm(nn.Module):
     def __init__(self, shape=None):
         super().__init__()
-        self.gamma = nn.Parameter(ones(shape)) if shape else None
+        self.weight = nn.Parameter(ones(shape)) if shape else None
+
+    @property
+    def gamma(self):
+        return self.weight
+
+    @gamma.setter
+    def gamma(self, val):
+        self.weight = val
 
     def forward(self, x, gamma=None):
-        g = self.gamma if gamma is None else gamma
+        g = self.weight if gamma is None else gamma
         rms = sqrt(x.pow(2).mean(dim=-1, keepdim=True) + eps)
         return (x / rms) * g
 
