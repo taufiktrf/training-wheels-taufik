@@ -44,6 +44,7 @@ from therapml.attention import (
 from therapml.rope import apply_rope
 from therapml.kv_cache import KVCachedAttention
 from therapml.model import TransformerBlock, MiniLlama, parameter_audit
+from therapml.training import lr_schedule, clip_gradients
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -736,7 +737,7 @@ def run_lr_schedule(
     W ≤ step ≤ total_steps : min_lr + ½(1 + cos(π · (step − W) / (total_steps − W))) · (max_lr − min_lr)
     step >  total_steps    : min_lr
     """
-    raise NotImplementedError
+    return lr_schedule(step, total_steps, max_lr, min_lr, warmup_frac)
 
 
 def run_gradient_clipping(parameters: Iterable[nn.Parameter], max_norm: float) -> float:
@@ -744,7 +745,7 @@ def run_gradient_clipping(parameters: Iterable[nn.Parameter], max_norm: float) -
     at most *max_norm*. Return the total norm **before** clipping (you will log
     it as the gradient-health metric). Parameters with ``grad is None`` are
     skipped."""
-    raise NotImplementedError
+    return clip_gradients(parameters, max_norm)
 
 
 # --- Task 5: Evaluation -----------------------------------------------------
