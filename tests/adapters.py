@@ -12,6 +12,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 from jaxtyping import Bool, Float, Int
+import torch
 from torch import Tensor, nn
 
 from therapml.pca import pca
@@ -42,6 +43,7 @@ from therapml.attention import (
 )
 from therapml.rope import apply_rope
 from therapml.kv_cache import KVCachedAttention
+from therapml.model import TransformerBlock, MiniLlama, parameter_audit
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -631,7 +633,10 @@ def run_transformer_block(
 ) -> Float[Tensor, "batch seq d_model"]:
     """Run your ``TransformerBlock`` with the given *weights* loaded (see the
     layout above). Token positions are ``arange(seq)``."""
-    raise NotImplementedError
+    block = TransformerBlock(d_model, num_heads, num_kv_heads, d_ff, theta=theta)
+    block.load_state_dict(weights)
+    block = block.to(in_features.device)
+    return block(in_features)
 
 
 def run_transformer_lm(
@@ -657,7 +662,21 @@ def run_transformer_lm(
     the embedding), so your model needs a way to load an untied output head
     (e.g. a ``tie_weights`` flag).
     """
-    raise NotImplementedError
+    tie = "lm_head.weight" not in weights
+    model = MiniLlama(
+        vocab_size,
+        context_length,
+        d_model,
+        num_layers,
+        num_heads,
+        num_kv_heads,
+        d_ff,
+        rope_theta=rope_theta,
+        tie_weights=tie,
+    )
+    model.load_state_dict(weights)
+    model = model.to(in_indices.device)
+    return model(in_indices)
 
 
 def get_mini_llama(
@@ -678,7 +697,17 @@ def get_mini_llama(
     (no biases), plus the token embedding (shared with the output head) and the
     final RMSNorm gain.
     """
-    raise NotImplementedError
+    return MiniLlama(
+        vocab_size,
+        context_length,
+        d_model,
+        num_layers,
+        num_heads,
+        num_kv_heads,
+        d_ff,
+        rope_theta=rope_theta,
+        tie_weights=True,
+    )
 
 
 def run_parameter_audit(model: nn.Module) -> list[dict]:
@@ -692,7 +721,7 @@ def run_parameter_audit(model: nn.Module) -> list[dict]:
 
     Your utility may also print the table. The tests only check the return value.
     """
-    raise NotImplementedError
+    return parameter_audit(model)
 
 
 # --- Task 3: The Training Loop ----------------------------------------------
