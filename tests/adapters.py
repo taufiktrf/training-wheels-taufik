@@ -45,6 +45,7 @@ from therapml.rope import apply_rope
 from therapml.kv_cache import KVCachedAttention
 from therapml.model import TransformerBlock, MiniLlama, parameter_audit
 from therapml.training import lr_schedule, clip_gradients
+from therapml.evaluation import perplexity, generate
 
 # ============================================================================
 # Pre-phase: Tensor Operations (kept from original repo)
@@ -756,7 +757,7 @@ def run_perplexity(
     targets: Int[Tensor, "..."],
 ) -> float:
     """Perplexity = exp(mean token-level cross-entropy, in nats)."""
-    raise NotImplementedError
+    return perplexity(logits, targets)
 
 
 def run_generate(
@@ -776,4 +777,4 @@ def run_generate(
       ``softmax(logits / temperature)`` using the global torch RNG, so that
       ``torch.manual_seed`` makes generation reproducible.
     """
-    raise NotImplementedError
+    return generate(model, prompt_ids, max_new_tokens, temperature, context_length)
