@@ -1,0 +1,5 @@
+From the "ablation_results.png" figure, we can see the perplexity loss for GQA follows the loss for MHA almost point to point for the whole training. It starts at 512 which confirms correct random initial distribution over all tokens. 
+
+In case of training speed, we can see the GQA variant completes 10.54 steps per second whereas MHA completes 9.04. Here, GQA is 16.5 times faster maintaining the same level of performance.
+
+It is also to be added that GQA provides memory savings too keeping the same performance and improved training speed.
