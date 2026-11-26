@@ -15,6 +15,8 @@ from typing import Any
 from jaxtyping import Float, Int
 from torch import Tensor, nn
 
+from therapml.decoding import generate, sample_next_token, top_k_filter, top_p_filter
+
 # ============================================================================
 # Phase 3: The LLM Lifecycle & Inference  (Week 5)
 # ============================================================================
@@ -41,7 +43,7 @@ def run_top_k_filter(logits: Float[Tensor, "... vocab"], k: int) -> Float[Tensor
     entry to ``-inf``. Kept logits are returned unchanged. ``k >= vocab`` keeps
     everything. Each row is filtered independently. Do not modify *logits* in
     place."""
-    raise NotImplementedError
+    return top_k_filter(logits, k)
 
 
 def run_top_p_filter(logits: Float[Tensor, "... vocab"], p: float) -> Float[Tensor, "... vocab"]:
@@ -54,7 +56,7 @@ def run_top_p_filter(logits: Float[Tensor, "... vocab"], p: float) -> Float[Tens
     ``-inf``. Kept logits are returned unchanged. ``p >= 1.0`` keeps everything.
     Each row is filtered independently. Do not modify *logits* in place.
     """
-    raise NotImplementedError
+    return top_p_filter(logits, p)
 
 
 def run_sample_next_token(
@@ -69,7 +71,7 @@ def run_sample_next_token(
     call this with many identical rows at once to check the sampling
     distribution, so it must be vectorised over the leading dimensions.
     """
-    raise NotImplementedError
+    return sample_next_token(logits, temperature, top_k, top_p)
 
 
 def run_decode(
@@ -101,7 +103,16 @@ def run_decode(
 
     Both paths must produce the same tokens for the same seed.
     """
-    raise NotImplementedError
+    return generate(
+        model,
+        prompt_ids,
+        max_new_tokens,
+        temperature=temperature,
+        top_k=top_k,
+        top_p=top_p,
+        context_length=context_length,
+        use_kv_cache=use_kv_cache,
+    )
 
 
 # --- Task 3: Post-Training Quantization -------------------------------------
