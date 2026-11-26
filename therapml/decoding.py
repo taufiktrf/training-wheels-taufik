@@ -74,7 +74,7 @@ def generate(
     use_kv_cache=False,
 ):
     t = next(iter(model.state_dict().values()), None)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = t.device if t is not None else ("cuda" if torch.cuda.is_available() else "cpu")
     tokens = list(prompt_ids)
     caches = _make_caches(model) if use_kv_cache else None
 
